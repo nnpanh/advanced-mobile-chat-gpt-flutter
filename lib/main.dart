@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 
 import 'constants.dart';
 
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: TranslateScreen(),
     );
   }
@@ -50,6 +52,12 @@ class _TranslateScreenState extends State<TranslateScreen> {
 
   @override
   void initState() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+    );
+
     openAI = OpenAI.instance.build(
         token: token,
         baseOption: HttpSetup(receiveTimeout: 6000),
@@ -70,11 +78,9 @@ class _TranslateScreenState extends State<TranslateScreen> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.teal,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.teal,
-        ),
+      appBar: NewGradientAppBar(
+        gradient: const LinearGradient(colors: [Colors.teal, Colors.tealAccent]),
+
         title: const Text("ChatGPT OpenAPI"),
       ),
       body: Column(children: [

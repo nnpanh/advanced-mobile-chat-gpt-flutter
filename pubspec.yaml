@@ -38,6 +38,7 @@ dependencies:
   dio: ^4.0.6
   shared_preferences: ^2.0.15
   chat_gpt_sdk: ^2.0.0
+  new_gradient_app_bar: ^0.2.0
 
 dev_dependencies:
   flutter_test:

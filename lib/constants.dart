@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final gptCard = BoxDecoration(
+final receiverStyle = BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(16.0),
     boxShadow: [
@@ -11,7 +11,7 @@ final gptCard = BoxDecoration(
           spreadRadius: .5)
     ]);
 
-final myCard = BoxDecoration(
+final senderStyle = BoxDecoration(
     color: Colors.teal,
     borderRadius: BorderRadius.circular(16.0),
     boxShadow: [
@@ -23,4 +23,4 @@ final myCard = BoxDecoration(
     ]);
 
 
-const token = "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";
+const token = "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";

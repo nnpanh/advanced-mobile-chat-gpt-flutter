@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:chat_gpt/ui_components/receiver_card.dart';
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 
+import 'ui_components/sender_card.dart';
 import 'constants.dart';
+import 'data.dart';
 
 void main() => runApp(const MyApp());
 
@@ -23,6 +26,7 @@ class MyApp extends StatelessWidget {
 
 class TranslateScreen extends StatefulWidget {
   const TranslateScreen({Key? key}) : super(key: key);
+
   @override
   State<TranslateScreen> createState() => _TranslateScreenState();
 }
@@ -30,6 +34,7 @@ class TranslateScreen extends StatefulWidget {
 class _TranslateScreenState extends State<TranslateScreen> {
   /// text controller
   final _txtWord = TextEditingController();
+  late List<MessageData> _chatHistory;
 
   late OpenAI openAI;
 
@@ -37,8 +42,15 @@ class _TranslateScreenState extends State<TranslateScreen> {
   final tController = StreamController<CTResponse?>.broadcast();
 
   void _createRequest() async {
+    var sendingPrompt = _txtWord.text.toString();
+    _txtWord.clear();
+
+    setState(() {
+      _chatHistory.add(MessageData(sendingPrompt, MessageType.sender));
+    });
+
     final request = CompleteText(
-        prompt: _txtWord.text.toString(),
+        prompt: sendingPrompt.toString(),
         maxTokens: 200,
         model: kTranslateModelV3);
 
@@ -49,15 +61,19 @@ class _TranslateScreenState extends State<TranslateScreen> {
     });
   }
 
-
   @override
   void initState() {
+    //UI
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
       ),
     );
 
+    //Init list of data
+    _chatHistory = List.empty(growable: true);
+
+    //Init openAI object
     openAI = OpenAI.instance.build(
         token: token,
         baseOption: HttpSetup(receiveTimeout: 6000),
@@ -79,8 +95,8 @@ class _TranslateScreenState extends State<TranslateScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: NewGradientAppBar(
-        gradient: const LinearGradient(colors: [Colors.teal, Colors.tealAccent]),
-
+        gradient:
+            const LinearGradient(colors: [Colors.teal, Colors.tealAccent]),
         title: const Text("ChatGPT OpenAPI"),
       ),
       body: Column(children: [
@@ -92,14 +108,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
                 fit: BoxFit.cover,
               ),
             ),
-            child: ListView(children: [
-              Column(
-                children: [
-                  _inputCard(size, _txtWord.text.toString()),
-                  _resultCard(size),
-                ],
-              ),
-            ]),
+            child: _chatHistoryListener(size)
           ),
         ),
         _inputField(size),
@@ -107,62 +116,16 @@ class _TranslateScreenState extends State<TranslateScreen> {
     );
   }
 
-  Widget _inputCard(Size size, String text) {
-    return Container(
-      alignment: Alignment.topRight,
-      margin: const EdgeInsets.only(right: 16.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 16.0),
-            padding: const EdgeInsets.all(16.0),
-            // width: size.width * .64,
-            decoration: myCard,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: size.width * .64),
-                child:
-                  Text(
-                    text,
-                    style: const TextStyle(color: Colors.white, fontSize: 18.0),
-                  ),
-              ),
-          ),
-        ],
-      ),
-    );
-  }
 
-
-
-  Widget _resultCard(Size size) {
+  Widget _chatHistoryListener(Size size) {
     return StreamBuilder<CTResponse?>(
       stream: tController.stream,
       builder: (context, snapshot) {
-        final text = snapshot.data?.choices.last.text.trim() ?? "Loading...";
-        return Container(
-          alignment: Alignment.topLeft,
-          margin: const EdgeInsets.only(left: 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 16.0),
-                padding: const EdgeInsets.all(16.0),
-                // width: size.width * .64,
-                decoration: gptCard,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: size.width * .64),
-                  child:
-                  Text(
-                    text,
-                    style: const TextStyle(color: Colors.black, fontSize: 18.0),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
+        final text = snapshot.data?.choices.last.text.trim();
+        if (text!=null) {
+          _chatHistory.add(MessageData(text, MessageType.receiver));
+        }
+        return BodyComponent(chatHistory: _chatHistory, size: size);
       },
     );
   }
@@ -196,5 +159,44 @@ class _TranslateScreenState extends State<TranslateScreen> {
         ],
       ),
     );
+  }
+}
+
+class BodyComponent extends StatefulWidget {
+  const BodyComponent({Key? key, required this.chatHistory, required this.size}) : super(key: key);
+  final List<MessageData> chatHistory;
+  final Size size;
+
+  @override
+  State<BodyComponent> createState() => _BodyComponentState();
+
+}
+class _BodyComponentState extends State<BodyComponent> {
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.chatHistory.isNotEmpty) {
+      return ListView.builder(
+        itemCount: widget.chatHistory.length,
+        itemBuilder: (BuildContext context, int index) {
+          var value = widget.chatHistory[index];
+          if (value.type == MessageType.sender) {
+            return senderCard(widget.size, value.message);
+          } else if (value.type == MessageType.receiver){
+            return receiverCard(widget.size, value.message);
+            // receiverCard(size, value.message);
+          } else {
+            return Container(
+                alignment: Alignment.center,
+                child: const Text("Invalid message card"));
+          }
+        },
+      );
+
+    } else {
+      return Container(
+          alignment: Alignment.center,
+          child: const Text("No message"));
+    }
   }
 }

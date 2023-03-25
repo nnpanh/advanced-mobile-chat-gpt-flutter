@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.chat_gpt">
    <application
-        android:label="chat_gpt"
+        android:label="VoiceChatGPT"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/chatgpt_logo">
         <activity
             android:name=".MainActivity"
             android:exported="true"

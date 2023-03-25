@@ -26,7 +26,7 @@
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
+        <li><a href="#built-with">Platforms</a></li>
       </ul>
     </li>
     <li>
@@ -36,10 +36,6 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -90,7 +86,7 @@ Install Flutter plugin in your IDE by following Flutter's official guide: https:
 
 _To run the project, please follwing these steps:_
 
-1. Get your chatGPT API Key in your [User ](https://platform.openai.com/account/api-keys)
+1. Get your chatGPT API Key in your [User settings](https://platform.openai.com/account/api-keys)
 2. Clone the repo
    ```sh
    git clone https://github.com/nnpanh/advanced-mobile-chat-gpt-flutter.git
@@ -98,11 +94,11 @@ _To run the project, please follwing these steps:_
 3. Install flutter dependencies
    ```sh
    flutter doctor
-   flutter pub 
+   flutter pub get
    ```
-4. Enter your API in `lib/api/api_key.`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+4. Enter your API in `lib/api/api_key.dart`
+   ```dart
+   const token = 'ENTER YOUR API';
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -123,16 +119,11 @@ Project Link: [https://github.com/nnpanh/advanced-mobile-chat-gpt-flutter](https
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
+List of preferences:
 
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+* [FlutGPT](https://github.com/beSaif/FlutGPT?ref=flutterawesome.com)
+* [Convert between text and speech](https://blog.logrocket.com/adding-speech-to-text-text-to-speech-support-flutter-app/)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

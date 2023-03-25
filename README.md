@@ -49,12 +49,12 @@
 This application is implemented following the requirements from HCMUS - Advanced Mobile Development class in 2023, Assignment 2 (25/03/2023 - 10/04/2023)
 
 Requirements:
-* Chatbot tự động với dạng text: chat và trả lời tự động theo dạng text message với API của chat GPT
-* Chat với microphone và chuyển đổi văn bản: Người dùng có thể nhập liệu nội dung bằng microphone (bạn có thể cái đặt theo 1 trong 2 dạng hold to speak hoặc start/stop to speak), âm thanh thu được tự động chuyển thành dạng text trong màn hình chat (speech to text) để nói chuyện với chatbot.
-* Đọc văn bản: chatbot trả lời dạng text và phát ra âm thanh để người dùng có thể nghe nội dung thay vì đọc (mặc định ứng dụng tự đọc văn bản, người dùng có thể enable/disable việc tụ đọc trong settings. Nếu tự đọc bị disable thì người dùng có thể press nút Play để nghe đọc văn bản)
-* Hỗ trợ 2 ngôn ngữ tiếng Anh và tiếng Việt: Ưng dụng hỗ đa ngôn ngữ để người dùng có thể chat bằng tiếng Anh hoặc tiếng Việt.
-* Lưu trữ message trong local storage khi thoát khỏi app
-* Settings: Cho thay đổi ngôn ngữ, enable/disable tự động đọc, xóa lịch sử chat đã lưu trữ
+* Automated chatbots with text: chat and auto-reply to text messages with GPT chat API
+* Chat with microphone and convert text: Users can input content with a microphone (you can set it to either hold to speak or start/stop to speak), the recorded audio is automatically converted to text in the chat screen (speech to text) to talk to the chatbot.
+* Read out-loud text: chatbot responds as text and emits sound so that users can listen to the content instead of reading it (by default the application reads the text itself, the user can enable/disable reading convergence in the settings). If auto read is disabled, the user can press the Play button to hear the text read
+* Support 2 languages English and Vietnamese: The application supports multi-language so that users can chat in English or Vietnamese.
+* Store messages in local storage when exiting the app
+* Settings: For changing language, enable/disable automatically read, delete stored chat history
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -87,15 +87,18 @@ Install Flutter plugin in your IDE by following Flutter's official guide: https:
 _To run the project, please follwing these steps:_
 
 1. Get your chatGPT API Key in your [User settings](https://platform.openai.com/account/api-keys)
+
 2. Clone the repo
    ```sh
    git clone https://github.com/nnpanh/advanced-mobile-chat-gpt-flutter.git
    ```
+
 3. Install flutter dependencies
    ```sh
    flutter doctor
    flutter pub get
    ```
+
 4. Enter your API in `lib/api/api_key.dart`
    ```dart
    const token = 'ENTER YOUR API';

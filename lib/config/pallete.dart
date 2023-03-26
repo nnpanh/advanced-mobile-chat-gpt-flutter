@@ -35,6 +35,10 @@ final lightThemeData = ThemeData(
         fontSize: 10,
         fontWeight: FontWeight.w400,
       )),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      foregroundColor: Colors.teal,
+      backgroundColor: Colors.teal
+    )
 );
 
 final darkThemeData = ThemeData(
@@ -61,4 +65,8 @@ final darkThemeData = ThemeData(
         fontSize: 10,
         fontWeight: FontWeight.w400,
       )),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        foregroundColor: Colors.tealAccent,
+        backgroundColor: Colors.tealAccent
+    )
 );

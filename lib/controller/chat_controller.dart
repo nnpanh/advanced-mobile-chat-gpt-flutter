@@ -34,7 +34,6 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    debugPrint("ChatController oninit");
     _chats.add(_conversation);
   }
 

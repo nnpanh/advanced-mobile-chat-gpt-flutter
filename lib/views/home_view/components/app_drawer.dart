@@ -1,21 +1,28 @@
+import 'dart:io';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutgpt/config/pallete.dart';
 import 'package:flutgpt/controller/chat_controller.dart';
+import 'package:flutgpt/controller/locale_controller.dart';
+import 'package:flutgpt/controller/speaker_controller.dart';
 import 'package:flutgpt/controller/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Drawer appDrawer() {
-  ThemeController themeController = Get.put(ThemeController());
+Drawer appDrawer(BuildContext context) {
   TextStyle fixedStyle = GoogleFonts.roboto(
     color: Colors.white,
   );
+  ThemeController themeController = Get.put(ThemeController());
   ChatController chatController = Get.put(ChatController());
+  SpeakerController speakerController = Get.put(SpeakerController());
+  LocaleController localeController = Get.put(LocaleController());
+
   return Drawer(
     backgroundColor: const Color(0xff202123),
     child: Padding(
       padding: const EdgeInsets.all(10),
-      child: GetBuilder<ChatController>(builder: (context) {
+      child: GetBuilder<ChatController>(builder: (chatContext) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -51,7 +58,7 @@ Drawer appDrawer() {
                                     chatController
                                             .chats[index].summary!.isNotEmpty
                                         ? chatController.chats[index].summary!
-                                        : 'New Chat',
+                                        : AppLocalizations.of(context)!.newChat,
                                     style: fixedStyle,
                                   ),
                                 ),
@@ -82,7 +89,7 @@ Drawer appDrawer() {
                             title: Text(
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              'New Chat',
+                              AppLocalizations.of(context)!.newChat,
                               style: fixedStyle,
                             ),
                           ),
@@ -105,7 +112,7 @@ Drawer appDrawer() {
                     Icons.delete_outline,
                     color: Colors.white,
                   ),
-                  title: Text('Clear Conversation', style: fixedStyle),
+                  title: Text(AppLocalizations.of(context)!.clearChat, style: fixedStyle),
                 ),
                 Obx(
                   () {
@@ -119,33 +126,50 @@ Drawer appDrawer() {
                       ),
                       title: Text(
                         themeController.isDarkMode.value
-                            ? 'Light Mode'
-                            : 'Dark Mode',
+                            ? AppLocalizations.of(context)!.darkMode
+                            : AppLocalizations.of(context)!.lightMode,
                         style: fixedStyle,
                       ),
                     );
                   },
                 ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.discord,
-                    color: Colors.white,
-                  ),
-                  title: Text('OpenAI Discord', style: fixedStyle),
+                Obx(
+                      () {
+                    return ListTile(
+                      onTap: () =>speakerController.changeReadMode(),
+                      leading: Icon(
+                        speakerController.autoRead.value
+                            ? Icons.volume_off_rounded
+                            : Icons.volume_up_rounded,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        speakerController.autoRead.value
+                            ? AppLocalizations.of(context)!.disableRead
+                            : AppLocalizations.of(context)!.enableRead,
+                        style: fixedStyle,
+                      ),
+                    );
+                  },
                 ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.open_in_new,
-                    color: Colors.white,
-                  ),
-                  title: Text('Updates and FAQ', style: fixedStyle),
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.logout_outlined,
-                    color: Colors.white,
-                  ),
-                  title: Text('Log out', style: fixedStyle),
+                Obx(
+                      () {
+                    return ListTile(
+                      onTap: () =>localeController.changeLanguage(),
+                      leading: Image.asset(
+                        localeController.englishLocale.value
+                            ? 'assets/britain.png'
+                            : 'assets/vietnam.png',
+                        height: 24, width:24
+                      ),
+                      title: Text(
+                        localeController.englishLocale.value
+                            ? 'English'
+                            : 'Tiếng Việt',
+                        style: fixedStyle,
+                      ),
+                    );
+                  },
                 ),
               ],
             )

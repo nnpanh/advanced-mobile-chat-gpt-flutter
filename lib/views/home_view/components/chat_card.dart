@@ -35,27 +35,40 @@ class ChatCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    image: messageBlock.author!.id == 'chatGPT'
-                        ? const DecorationImage(
-                            image: AssetImage("assets/chatgpt_logo.png"),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                    color: Colors.grey,
-                  ),
-                  child: messageBlock.author!.id != 'chatGPT'
-                      ? Center(
-                          child: Text(
-                            "S",
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                        )
-                      : null),
+              Column(
+                children: [
+                  Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        image: messageBlock.author!.id == 'chatGPT'
+                            ? const DecorationImage(
+                                image: AssetImage("assets/chatgpt_logo.png"),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        color: Colors.grey,
+                      ),
+                      child: messageBlock.author!.id != 'chatGPT'
+                          ? Center(
+                              child: Text(
+                                "S",
+                                style: Theme.of(context).textTheme.displaySmall,
+                              ),
+                            )
+                          : null),
+                  messageBlock.author!.id == 'chatGPT'?
+          SizedBox(
+            height: 40,
+            width: 40,
+            child: IconButton(icon: const Icon(Icons.volume_up), onPressed: () {
+
+            },)
+          ):
+                      Container()
+                ],
+              ),
               const SizedBox(
                 width: 20,
               ),

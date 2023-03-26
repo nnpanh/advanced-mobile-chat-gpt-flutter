@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutgpt/controller/chat_controller.dart';
 import 'package:flutgpt/views/home_view/components/chat_card.dart';
 import 'package:flutgpt/views/home_view/components/empty_state.dart';
@@ -15,6 +17,14 @@ class HomeViewBody extends StatefulWidget {
 
 class _HomeViewBodyState extends State<HomeViewBody> {
   ChatController chatController = Get.put(ChatController());
+  TextEditingController inputController = TextEditingController();
+
+  late SpeechRecognition _speech;
+  bool _isSpeechStarted = false;
+  bool _isListening = false;
+  String transcription = '';
+  String currentText = '';
+  bool _isEndOfSpeech = false;
 
   final ScrollController _controller = ScrollController(keepScrollOffset: true);
 
@@ -30,7 +40,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext buildContext) {
     return GetBuilder<ChatController>(builder: (context) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -86,14 +96,25 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                     ),
                   ),
           ),
-          customChatInput()
+          customChatInput(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FloatingActionButton(onPressed: (){
+              },
+              child: Icon(Icons.mic, color: Theme.of(buildContext).primaryColor),)
+              // foregroundColor: Theme.of(buildContext).floatingActionButtonTheme.foregroundColor,)
+            ]
+          ),
+          const SizedBox(
+            height: 18,
+          ),
         ],
       );
     });
   }
 
   Column customChatInput() {
-    TextEditingController controller = TextEditingController();
     return Column(
       children: [
         const Divider(
@@ -125,9 +146,9 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                     child: TextField(
                       enabled: !chatController.isLoading,
                       onSubmitted: (value) {
-                        _handleSendPressed(controller.text);
+                        _handleSendPressed(inputController.text);
                       },
-                      controller: controller,
+                      controller: inputController,
                       cursorColor: Colors.white,
                       cursorRadius: const Radius.circular(5),
                       maxLines: 1,
@@ -142,8 +163,8 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                 const SizedBox(width: 8.0),
                 GestureDetector(
                   onTap: () {
-                    if (controller.text.isNotEmpty) {
-                      _handleSendPressed(controller.text);
+                    if (inputController.text.isNotEmpty) {
+                      _handleSendPressed(inputController.text);
                     }
                   },
                   child: SizedBox(
@@ -161,37 +182,6 @@ class _HomeViewBodyState extends State<HomeViewBody> {
         const SizedBox(
           height: 6,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Powered by ",
-              style: GoogleFonts.roboto(
-                color: Theme.of(context).textTheme.bodyLarge!.color,
-                fontSize: 12,
-              ),
-            ),
-            Text(
-              "codeSaif",
-              style: GoogleFonts.roboto(
-                color: Theme.of(context).textTheme.bodyLarge!.color,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-          child: Text(
-            "FlutGPT is not endorsed by OpenAI or ChatGPT in any way. Our use of the API is governed by the OpenAI Terms of Service and Privacy Policy. We are not responsible for any misuse of the API.",
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        )
       ],
     );
   }
@@ -213,4 +203,6 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   void _handleSendPressed(String message) {
     chatController.handleSendPressed(message);
   }
+
+
 }

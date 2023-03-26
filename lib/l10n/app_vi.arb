@@ -1,0 +1,9 @@
+{
+  "lightMode": "Chế độ nền sáng",
+  "darkMode": "Chế độ nền tối",
+  "enableRead": "Bật tự động đọc",
+  "disableRead": "Tắt tự động đọc",
+  "clearChat": "Xóa cuộc trò chuyện",
+  "newChat": "Tạo cuộc trò chuyện mới",
+  "startPrompt": "Bắt đầu nhập hoặc ấn và giữ biểu tượng micro để nói."
+}

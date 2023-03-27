@@ -5,5 +5,5 @@
   "disableRead": "Disable auto-read",
   "clearChat": "Clear conversation",
   "newChat": "New chat",
-  "startPrompt": "Start typing or hold the microphone icon to speak."
+  "startPrompt": "Start typing or tap the microphone icon to speak."
 }

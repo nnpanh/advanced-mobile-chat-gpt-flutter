@@ -1,12 +1,11 @@
-import 'dart:html';
-
 import 'package:flutgpt/controller/chat_controller.dart';
 import 'package:flutgpt/views/home_view/components/chat_card.dart';
 import 'package:flutgpt/views/home_view/components/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class HomeViewBody extends StatefulWidget {
   const HomeViewBody({super.key});
@@ -18,17 +17,14 @@ class HomeViewBody extends StatefulWidget {
 class _HomeViewBodyState extends State<HomeViewBody> {
   ChatController chatController = Get.put(ChatController());
   TextEditingController inputController = TextEditingController();
-
-  late SpeechRecognition _speech;
-  bool _isSpeechStarted = false;
-  bool _isListening = false;
-  String transcription = '';
-  String currentText = '';
-  bool _isEndOfSpeech = false;
-
   final ScrollController _controller = ScrollController(keepScrollOffset: true);
 
-// This is what you're looking for!
+
+  final SpeechToText _speechToText = SpeechToText();
+  bool _speechEnabled = false;
+  String _lastWords = '';
+
+  // This is what you're looking for!
   void scrollDown() {
     if (_controller.position.maxScrollExtent > 0) {
       _controller.animateTo(
@@ -37,6 +33,43 @@ class _HomeViewBodyState extends State<HomeViewBody> {
         curve: Curves.fastOutSlowIn,
       );
     }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  /// This has to happen only once per app
+  void _initSpeech() async {
+    _speechEnabled = await _speechToText.initialize();
+    setState(() {});
+  }
+
+  /// Each time to start a speech recognition session
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {});
+  }
+
+  /// Manually stop the active speech recognition session
+  /// Note that there are also timeouts that each platform enforces
+  /// and the SpeechToText plugin supports setting timeouts on the
+  /// listen method.
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {});
+  }
+
+  /// This is the callback that the SpeechToText plugin calls when
+  /// the platform returns recognized words.
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+      inputController.text = inputController.text + _lastWords;
+    });
   }
 
   @override
@@ -100,10 +133,14 @@ class _HomeViewBodyState extends State<HomeViewBody> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FloatingActionButton(onPressed: (){
-              },
-              child: Icon(Icons.mic, color: Theme.of(buildContext).primaryColor),)
-              // foregroundColor: Theme.of(buildContext).floatingActionButtonTheme.foregroundColor,)
+              FloatingActionButton(
+                onPressed:
+                // If not yet listening for speech start, otherwise stop
+                _speechToText.isNotListening ? _startListening : _stopListening,
+                tooltip: 'Tap to speak',
+                child: Icon(_speechToText.isNotListening ? Icons.mic : Icons.pause,
+                    color: Theme.of(buildContext).primaryColor),
+              ),
             ]
           ),
           const SizedBox(
@@ -151,7 +188,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                       controller: inputController,
                       cursorColor: Colors.white,
                       cursorRadius: const Radius.circular(5),
-                      maxLines: 1,
+                      maxLines: 3,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,

@@ -159,9 +159,9 @@ class _HomeViewBodyState extends State<HomeViewBody> {
           thickness: 1,
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Container(
-            height: 40,
+            // height: 40,
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -175,7 +175,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
               borderRadius: BorderRadius.circular(5.0),
             ),
             padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: Row(
               children: <Widget>[
                 Expanded(
@@ -187,12 +187,15 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                       },
                       controller: inputController,
                       cursorColor: Colors.white,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      maxLength: 100,
                       cursorRadius: const Radius.circular(5),
-                      maxLines: 3,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
                         isDense: true,
+                        counterText: ""
                       ),
                     ),
                   ),

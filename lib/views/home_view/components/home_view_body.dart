@@ -68,7 +68,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       _lastWords = result.recognizedWords;
-      inputController.text = inputController.text + _lastWords;
+      inputController.text = _lastWords;
     });
   }
 
@@ -130,18 +130,64 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                   ),
           ),
           customChatInput(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FloatingActionButton(
-                onPressed:
-                // If not yet listening for speech start, otherwise stop
-                _speechToText.isNotListening ? _startListening : _stopListening,
-                tooltip: 'Tap to speak',
-                child: Icon(_speechToText.isNotListening ? Icons.mic : Icons.pause,
-                    color: Theme.of(buildContext).primaryColor),
-              ),
-            ]
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: InkWell(
+                    onTap: (){
+                      inputController.clear();
+                    },
+                    child:
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.delete_forever_rounded, size: 20),
+                          SizedBox(width: 8,),
+                          Text('Clear text', style: TextStyle(fontSize: 16))
+                        ]
+                      ),
+                    ),
+                  )
+                ),
+                Expanded(
+                  flex:1,
+                  child: FloatingActionButton(
+                    onPressed:
+                    // If not yet listening for speech start, otherwise stop
+                    _speechToText.isNotListening ? _startListening : _stopListening,
+                    child: Icon(_speechToText.isNotListening ? Icons.mic : Icons.pause,
+                        color: Theme.of(buildContext).primaryColor),
+                  ),
+                ),
+                Expanded(
+                    flex: 1,
+                    child: InkWell(
+                      onTap: (){
+                        if (inputController.text.isNotEmpty) {
+                          _handleSendPressed(inputController.text);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.send_sharp, size: 18),
+                              SizedBox(width: 8,),
+                              Text('Send', style: TextStyle(fontSize: 16))
+                            ]
+                        ),
+                      ),
+                    )
+                ),
+              ]
+            ),
           ),
           const SizedBox(
             height: 18,
@@ -200,21 +246,6 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8.0),
-                GestureDetector(
-                  onTap: () {
-                    if (inputController.text.isNotEmpty) {
-                      _handleSendPressed(inputController.text);
-                    }
-                  },
-                  child: SizedBox(
-                      height: 15,
-                      width: 15,
-                      child: Image.asset(
-                        'assets/send.png',
-                        fit: BoxFit.fitHeight,
-                      )),
-                ),
               ],
             ),
           ),
@@ -242,6 +273,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
 
   void _handleSendPressed(String message) {
     chatController.handleSendPressed(message);
+    inputController.clear();
   }
 
 

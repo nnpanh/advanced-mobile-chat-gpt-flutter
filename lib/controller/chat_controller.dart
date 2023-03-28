@@ -24,9 +24,11 @@ class ChatController extends GetxController {
     update();
   }
 
+  //List of chat history
   final List<ConversationModel> _chats = [];
   List<ConversationModel> get chats => _chats;
 
+  //Current chat
   final ConversationModel _conversation = ConversationModel(
       isSummarized: false, summary: "", prompt: "", messages: []);
   ConversationModel get conversation => _conversation;

@@ -5,6 +5,7 @@ class MessageModel {
   String? message;
   User? author;
   int? createdAt;
+  bool isPlaying = false;
 
   MessageModel({this.message, this.author, this.id, this.createdAt});
 }

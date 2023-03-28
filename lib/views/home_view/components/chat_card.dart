@@ -8,10 +8,14 @@ enum ChatCardType { human, gpt }
 class ChatCard extends StatelessWidget {
   // final ChatCardType user;
   final MessageModel messageBlock;
+  //Audio status
+  final bool isPlaying;
+  //On click play/stop button
+  final VoidCallback onClickPlay;
+
   const ChatCard({
-    // required this.user,
-    required this.messageBlock,
     super.key,
+    required this.messageBlock, required this.isPlaying, required this.onClickPlay,
   });
 
   @override
@@ -62,9 +66,7 @@ class ChatCard extends StatelessWidget {
           SizedBox(
             height: 40,
             width: 40,
-            child: IconButton(icon: const Icon(Icons.volume_up), onPressed: () {
-
-            },)
+            child: IconButton(icon: isPlaying? const Icon(Icons.stop): const Icon(Icons.volume_up), onPressed: onClickPlay,)
           ):
                       Container()
                 ],

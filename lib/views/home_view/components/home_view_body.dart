@@ -3,6 +3,7 @@ import 'package:flutgpt/views/home_view/components/chat_card.dart';
 import 'package:flutgpt/views/home_view/components/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -19,22 +20,9 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   TextEditingController inputController = TextEditingController();
   final ScrollController _controller = ScrollController(keepScrollOffset: true);
 
-
+  //Speech to text
   final SpeechToText _speechToText = SpeechToText();
-  bool _speechEnabled = false;
   String _lastWords = '';
-
-  // This is what you're looking for!
-  void scrollDown() {
-    if (_controller.position.maxScrollExtent > 0) {
-      _controller.animateTo(
-        _controller.position.maxScrollExtent,
-        duration: const Duration(seconds: 2),
-        curve: Curves.fastOutSlowIn,
-      );
-    }
-  }
-
 
   @override
   void initState() {
@@ -44,7 +32,6 @@ class _HomeViewBodyState extends State<HomeViewBody> {
 
   /// This has to happen only once per app
   void _initSpeech() async {
-    _speechEnabled = await _speechToText.initialize();
     setState(() {});
   }
 
@@ -71,6 +58,17 @@ class _HomeViewBodyState extends State<HomeViewBody> {
       inputController.text = _lastWords;
     });
   }
+
+  void scrollDown() {
+    if (_controller.position.maxScrollExtent > 0) {
+      _controller.animateTo(
+        _controller.position.maxScrollExtent,
+        duration: const Duration(seconds: 2),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext buildContext) {
@@ -107,6 +105,32 @@ class _HomeViewBodyState extends State<HomeViewBody> {
 
                               return ChatCard(
                                 messageBlock: message[index],
+                                isPlaying: message[index].isPlaying,
+                                onClickPlay: () async {
+                                  message[index].isPlaying = !message[index].isPlaying;
+                                  chatController.update();
+                                  FlutterTts textToSpeech = FlutterTts();
+
+                                  textToSpeech.setCompletionHandler((){
+                                    message[index].isPlaying = false;
+                                    chatController.update();
+                                  });
+
+                                  if (message[index].isPlaying){
+                                    await textToSpeech.setSpeechRate(0.5); //speed of speech
+                                    await textToSpeech.setVolume(1.0); //volume of speech
+                                    await textToSpeech.setPitch(1); //pitc of sound
+
+                                    if (message[index].message!=null) {
+                                      await textToSpeech.stop();
+                                      await textToSpeech.speak(message[index].message!);
+                                    }
+                                  }
+                                  //If it's not playing
+                                  else {
+                                    await textToSpeech.stop();
+                                  }
+                                }
                               );
                             }),
                         Visibility(

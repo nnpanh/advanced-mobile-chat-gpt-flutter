@@ -17,6 +17,7 @@ dependencies:
   flutter_chat_ui: ^1.6.6
   flutter_localizations:
     sdk: flutter
+  flutter_tts: ^3.6.3
   get: ^4.6.5
   google_fonts: ^4.0.1
   http: ^0.13.5

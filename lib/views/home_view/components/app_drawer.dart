@@ -34,8 +34,8 @@ Drawer appDrawer(BuildContext context) {
                 child: Column(
                   children: [
                     Visibility(
-                      visible: true,
-                      // visible: chatController.chats[0].summary!.isNotEmpty,
+                      // visible: true,
+                      visible: chatController.chats[0].summary!.isNotEmpty,
                       child: ListView.builder(
                           shrinkWrap: true,
                           itemCount: chatController.chats.length,
@@ -70,37 +70,37 @@ Drawer appDrawer(BuildContext context) {
                             );
                           }),
                     ),
-                    // Visibility(
-                    //   visible: chatController
-                    //           .chats[chatController.chats.length - 1]
-                    //           .summary!
-                    //           .isNotEmpty ||
-                    //       chatController.chats.length == 1,
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       chatController.addChat();
-                    //       chatController.changeAutoSpeakingMode(speakerController.autoRead.value);
-                    //     },
-                    //     child: Container(
-                    //       decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: activeColor),
-                    //       ),
-                    //       child: ListTile(
-                    //         leading: const Icon(
-                    //           Icons.add,
-                    //           color: Colors.white,
-                    //         ),
-                    //         title: Text(
-                    //           overflow: TextOverflow.ellipsis,
-                    //           maxLines: 1,
-                    //           AppLocalizations.of(context)!.newChat,
-                    //           style: fixedStyle,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    Visibility(
+                      visible: chatController
+                              .chats[chatController.chats.length - 1]
+                              .summary!
+                              .isNotEmpty ||
+                          chatController.chats.length == 1,
+                      child: GestureDetector(
+                        onTap: () {
+                          chatController.addChat();
+                          chatController.changeAutoSpeakingMode(speakerController.autoRead.value);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: activeColor),
+                          ),
+                          child: ListTile(
+                            leading: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                            ),
+                            title: Text(
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              AppLocalizations.of(context)!.newChat,
+                              style: fixedStyle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -114,7 +114,9 @@ Drawer appDrawer(BuildContext context) {
                 ListTile(
                   onTap: () {
                     cleanDatabase();
-                    chatController.clearConversation();
+                    for (var elements in chatController.chats) {
+                      chatController.clearConversation();
+                    }
                     } ,
                   leading: const Icon(
                     Icons.delete_outline,
@@ -196,4 +198,6 @@ void cleanDatabase() async {
   await dir.create(recursive: true);
   var dbPath = join(dir.path, 'my_database.db');
   var db = await databaseFactoryIo.openDatabase(dbPath);
+  db.close;
+  await databaseFactoryIo.deleteDatabase(db.path);
 }

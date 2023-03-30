@@ -58,8 +58,8 @@ Future<void> reloadConversations(ChatController chatController) async {
   var db = await databaseFactoryIo.openDatabase(dbPath);
   var store = StoreRef.main();
   //Get number of chats
-  int numberOfChats = await store.record('numberOfChats').get(db) as int;
-
+  int? numberOfChats = await store.record('numberOfChats').get(db) as int?;
+  numberOfChats ??= 0;
   //Get all chats
   List<ConversationModel> chats = [];
   for (int i = 0; i < numberOfChats; i++) {
@@ -68,7 +68,7 @@ Future<void> reloadConversations(ChatController chatController) async {
     ConversationModel parsedChat = ConversationModel.fromJson(decodeJson);
     if (parsedChat.messages.isNotEmpty) {
       if (parsedChat.summary.isBlank == true) {
-        parsedChat.summary = "New chat";
+        parsedChat.summary = "Old chat";
       }
       chats.add(parsedChat);
     }
@@ -77,6 +77,7 @@ Future<void> reloadConversations(ChatController chatController) async {
   if (chats.isNotEmpty) {
     chatController.addOldChat(chats);
   }
+  chatController.chats.add(chatController.conversation);
 
   await db.close();
 }

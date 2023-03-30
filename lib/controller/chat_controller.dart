@@ -96,7 +96,7 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _chats.add(_conversation);
+    // _chats.add(_conversation);
     //On finish read one-line
     textToSpeech.setCompletionHandler((){
       chats[promptIndex].messages.firstWhere((element) => element.id == currentReadingText).isPlaying = false;
@@ -302,7 +302,7 @@ class ChatController extends GetxController {
         }
       }
     }
-    _chatIndex = _chats.length - 1;
+    _chatIndex = _chats.length;
   }
 
   void changeConversation(int index) {

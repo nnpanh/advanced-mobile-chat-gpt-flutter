@@ -1,5 +1,5 @@
 import 'dart:collection';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutgpt/controller/chat_controller.dart';
 import 'package:flutgpt/controller/speaker_controller.dart';
 import 'package:flutgpt/views/home_view/components/chat_card.dart';
@@ -165,10 +165,10 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.delete_forever_rounded, size: 20),
-                          SizedBox(width: 8,),
-                          Text('Clear text', style: TextStyle(fontSize: 16))
+                        children:  [
+                          const Icon(Icons.delete_forever_rounded, size: 20),
+                          const SizedBox(width: 8,),
+                          Text(AppLocalizations.of(buildContext)!.clearText, style: const TextStyle(fontSize: 16))
                         ]
                       ),
                     ),
@@ -196,10 +196,10 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.send_sharp, size: 18),
-                              SizedBox(width: 8,),
-                              Text('Send', style: TextStyle(fontSize: 16))
+                            children: [
+                              const Icon(Icons.send_sharp, size: 18),
+                              const SizedBox(width: 8,),
+                              Text(AppLocalizations.of(buildContext)!.send, style: const TextStyle(fontSize: 16))
                             ]
                         ),
                       ),

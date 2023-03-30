@@ -5,5 +5,7 @@
   "disableRead": "Tắt tự động đọc",
   "clearChat": "Xóa cuộc trò chuyện",
   "newChat": "Tạo cuộc trò chuyện mới",
-  "startPrompt": "Bắt đầu nhập hoặc ấn biểu tượng micro để nói."
+  "startPrompt": "Bắt đầu nhập hoặc ấn biểu tượng micro để nói.",
+  "clearText": "Xóa",
+  "send": "Gửi"
 }

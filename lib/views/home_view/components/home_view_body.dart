@@ -1,12 +1,10 @@
-import 'dart:collection';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutgpt/controller/chat_controller.dart';
 import 'package:flutgpt/controller/speaker_controller.dart';
 import 'package:flutgpt/views/home_view/components/chat_card.dart';
 import 'package:flutgpt/views/home_view/components/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -25,14 +23,9 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   final ScrollController _controller = ScrollController(keepScrollOffset: true);
 
   //Speech to text
-  SpeechToText _speechToText = SpeechToText();
+  final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   String _lastWords = '';
-
-  // //Text to speech
-  // FlutterTts textToSpeech = FlutterTts();
-  // final Queue<String> _speechToReadQueue = Queue();
-
 
   @override
   void initState() {

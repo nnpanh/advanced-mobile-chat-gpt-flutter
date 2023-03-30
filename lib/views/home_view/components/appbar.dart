@@ -28,6 +28,19 @@ AppBar appBar() {
             fontWeight: FontWeight.w300,
           )),
     ),
+    actions: [
+      GestureDetector(
+        onTap: () {
+          chatController.addChat();
+        },
+        child: const Icon(
+          Icons.add,
+          size: 25,
+          color: Colors.white,
+        ),
+      ),
+      const SizedBox(width: 16),
+    ],
     centerTitle: true,
     titleSpacing: 0,
   );

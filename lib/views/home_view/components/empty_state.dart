@@ -24,7 +24,7 @@ class _EmptyStateState extends State<EmptyState> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Text("FlutGPT", style: Theme.of(context).textTheme.displayLarge),
+            Text("VoiceGPT", style: Theme.of(context).textTheme.displayLarge),
             const SizedBox(
               height: 30,
             ),

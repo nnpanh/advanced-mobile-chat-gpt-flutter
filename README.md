@@ -122,10 +122,14 @@ Project Link: [https://github.com/nnpanh/advanced-mobile-chat-gpt-flutter](https
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-List of preferences:
+List of preferences and resources:
 
 * [FlutGPT](https://github.com/beSaif/FlutGPT?ref=flutterawesome.com)
 * [Convert between text and speech](https://blog.logrocket.com/adding-speech-to-text-text-to-speech-support-flutter-app/)
+* [Speech to text library](https://pub.dev/packages/speech_to_text)
+* [Text to speech library](https://pub.dev/packages/flutter_tts)
+* [GetX](https://pub.dev/packages/get)
+* [Hive library for flutter](https://pub.dev/packages/hive)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

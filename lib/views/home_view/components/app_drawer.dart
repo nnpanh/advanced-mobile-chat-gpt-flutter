@@ -8,6 +8,9 @@ import 'package:flutgpt/controller/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sembast/sembast_io.dart';
 
 Drawer appDrawer(BuildContext context) {
   TextStyle fixedStyle = GoogleFonts.roboto(
@@ -31,7 +34,8 @@ Drawer appDrawer(BuildContext context) {
                 child: Column(
                   children: [
                     Visibility(
-                      visible: chatController.chats[0].summary!.isNotEmpty,
+                      visible: true,
+                      // visible: chatController.chats[0].summary!.isNotEmpty,
                       child: ListView.builder(
                           shrinkWrap: true,
                           itemCount: chatController.chats.length,
@@ -66,37 +70,37 @@ Drawer appDrawer(BuildContext context) {
                             );
                           }),
                     ),
-                    Visibility(
-                      visible: chatController
-                              .chats[chatController.chats.length - 1]
-                              .summary!
-                              .isNotEmpty ||
-                          chatController.chats.length == 1,
-                      child: GestureDetector(
-                        onTap: () {
-                          chatController.addChat();
-                          chatController.changeAutoSpeakingMode(speakerController.autoRead.value);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: activeColor),
-                          ),
-                          child: ListTile(
-                            leading: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                            ),
-                            title: Text(
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              AppLocalizations.of(context)!.newChat,
-                              style: fixedStyle,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Visibility(
+                    //   visible: chatController
+                    //           .chats[chatController.chats.length - 1]
+                    //           .summary!
+                    //           .isNotEmpty ||
+                    //       chatController.chats.length == 1,
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       chatController.addChat();
+                    //       chatController.changeAutoSpeakingMode(speakerController.autoRead.value);
+                    //     },
+                    //     child: Container(
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //         border: Border.all(color: activeColor),
+                    //       ),
+                    //       child: ListTile(
+                    //         leading: const Icon(
+                    //           Icons.add,
+                    //           color: Colors.white,
+                    //         ),
+                    //         title: Text(
+                    //           overflow: TextOverflow.ellipsis,
+                    //           maxLines: 1,
+                    //           AppLocalizations.of(context)!.newChat,
+                    //           style: fixedStyle,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -108,7 +112,10 @@ Drawer appDrawer(BuildContext context) {
                   color: activeColor,
                 ),
                 ListTile(
-                  onTap: () => chatController.clearConversation(),
+                  onTap: () {
+                    cleanDatabase();
+                    chatController.clearConversation();
+                    } ,
                   leading: const Icon(
                     Icons.delete_outline,
                     color: Colors.white,
@@ -182,4 +189,11 @@ Drawer appDrawer(BuildContext context) {
       }),
     ),
   );
+}
+
+void cleanDatabase() async {
+  var dir = await getApplicationDocumentsDirectory();
+  await dir.create(recursive: true);
+  var dbPath = join(dir.path, 'my_database.db');
+  var db = await databaseFactoryIo.openDatabase(dbPath);
 }

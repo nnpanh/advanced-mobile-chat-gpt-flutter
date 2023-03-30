@@ -1,24 +1,29 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:flutgpt/api/api_key.dart';
-import 'package:flutgpt/controller/speaker_controller.dart';
 import 'package:flutgpt/controller/user_controller.dart';
 import 'package:flutgpt/model/conversation_model.dart';
 import 'package:flutgpt/model/message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sembast/sembast.dart';
+import 'package:sembast/sembast_io.dart';
 
 class ChatController extends GetxController {
   int _chatIndex = 0;
+  int maxChat = 5;
 
   // Adds a message to the current chat even if it's not the active one
   int promptIndex = 0;
 
   int get chatIndex => _chatIndex;
-  late String chatId;
+  // late String chatId;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -27,6 +32,9 @@ class ChatController extends GetxController {
   final ListQueue<String> _speechIdToReadQueue = ListQueue<String>();
   String? currentReadingText;
   bool isAutoSpeaking = false;
+
+  // //Persist data
+  // late final Box box;
 
   void changeAutoSpeakingMode(bool autoRead) {
     if (isAutoSpeaking == autoRead) return; //do nothing
@@ -102,6 +110,8 @@ class ChatController extends GetxController {
       }
     });
 
+    // //Init hive
+    // box = Hive.box('history');
   }
 
   Future postRequestToChatGPT() async {
@@ -183,7 +193,29 @@ class ChatController extends GetxController {
         startSpeakingFirstMessageInQueue();
       }
     }
+
+    saveDataToSembast();
     update();
+  }
+
+  void saveDataToSembast() async {
+    //Open db
+    var dir = await getApplicationDocumentsDirectory();
+    await dir.create(recursive: true);
+    var dbPath = join(dir.path, 'my_database.db');
+    var db = await databaseFactoryIo.openDatabase(dbPath);
+    var store = StoreRef.main();
+    //Store number of chats
+    await store.record('numberOfChats').put(db, chats.length);
+
+    //Store each chats
+    for (int i = 0; i < chats.length; i++) {
+      if(chats[i].messages.isNotEmpty) {
+        String jsonString = jsonEncode(chats[i].toJson());
+        await store.record('chat$i').put(db, jsonString);
+      }
+    }
+    await db.close();
   }
 
   Future<void> startSpeakingFirstMessageInQueue() async {
@@ -254,12 +286,23 @@ class ChatController extends GetxController {
   }
 
   addChat() {
-    if (chats.isNotEmpty && chats[chats.length - 1].prompt!.isNotEmpty) {
+    if (chats.isNotEmpty && chats[chats.length - 1].prompt!.isNotEmpty && chats.length<maxChat) {
       _chats.add(ConversationModel(
           isSummarized: false, summary: "", prompt: "", messages: []));
       _chatIndex = _chats.length - 1;
       update();
     }
+  }
+
+  addOldChat(List<ConversationModel> conversations) {
+    for (var element in conversations) {
+      if (element.messages.isNotEmpty) {
+        if (chats.length < maxChat) {
+          _chats.add(element);
+        }
+      }
+    }
+    _chatIndex = _chats.length - 1;
   }
 
   void changeConversation(int index) {

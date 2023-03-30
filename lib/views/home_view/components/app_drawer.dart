@@ -75,6 +75,7 @@ Drawer appDrawer(BuildContext context) {
                       child: GestureDetector(
                         onTap: () {
                           chatController.addChat();
+                          chatController.changeAutoSpeakingMode(speakerController.autoRead.value);
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -136,7 +137,10 @@ Drawer appDrawer(BuildContext context) {
                 Obx(
                       () {
                     return ListTile(
-                      onTap: () =>speakerController.changeReadMode(),
+                      onTap: () {
+                        speakerController.changeReadMode();
+                        chatController.changeAutoSpeakingMode(speakerController.autoRead.value);
+                      },
                       leading: Icon(
                         speakerController.autoRead.value
                             ? Icons.volume_off_rounded

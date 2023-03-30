@@ -12,10 +12,12 @@ class ChatCard extends StatelessWidget {
   final bool isPlaying;
   //On click play/stop button
   final VoidCallback onClickPlay;
+  //Is autoplay- mode;
+  final bool isAutoPlay;
 
   const ChatCard({
     super.key,
-    required this.messageBlock, required this.isPlaying, required this.onClickPlay,
+    required this.messageBlock, required this.isPlaying, required this.onClickPlay, required this.isAutoPlay,
   });
 
   @override
@@ -63,10 +65,13 @@ class ChatCard extends StatelessWidget {
                             )
                           : null),
                   messageBlock.author!.id == 'chatGPT'?
-          SizedBox(
-            height: 40,
-            width: 40,
-            child: IconButton(icon: isPlaying? const Icon(Icons.stop): const Icon(Icons.volume_up), onPressed: onClickPlay,)
+          Visibility(
+            visible: !isAutoPlay,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: IconButton(icon: isPlaying? const Icon(Icons.stop): const Icon(Icons.volume_up), onPressed: onClickPlay,)
+            ),
           ):
                       Container()
                 ],

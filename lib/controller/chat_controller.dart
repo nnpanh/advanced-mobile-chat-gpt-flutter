@@ -1,10 +1,13 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutgpt/api/api_key.dart';
+import 'package:flutgpt/controller/speaker_controller.dart';
 import 'package:flutgpt/controller/user_controller.dart';
 import 'package:flutgpt/model/conversation_model.dart';
 import 'package:flutgpt/model/message_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
@@ -18,6 +21,55 @@ class ChatController extends GetxController {
   late String chatId;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  //Control speaking
+  FlutterTts textToSpeech = FlutterTts();
+  final ListQueue<String> _speechIdToReadQueue = ListQueue<String>();
+  String? currentReadingText;
+  bool isAutoSpeaking = false;
+
+  void changeAutoSpeakingMode(bool autoRead) {
+    if (isAutoSpeaking == autoRead) return; //do nothing
+
+    textToSpeech.stop();
+    if (currentReadingText !=null) {
+      chats[promptIndex].messages.firstWhere((element) => element.id == currentReadingText).isPlaying = false;
+      currentReadingText = null;
+    }
+    _speechIdToReadQueue.clear();
+    isAutoSpeaking = autoRead;
+
+    update();
+  }
+
+  void onClickSpeakerIcon(String? clickedId) {
+    //If has icon -> isAutoSpeaking = false;
+    if (currentReadingText !=null) {
+      if (currentReadingText != clickedId) {
+        //Is speaking another message
+        textToSpeech.stop();
+        //Stop old one
+        chats[promptIndex].messages.firstWhere((element) => element.id == currentReadingText).isPlaying = false;
+        //Start new one
+        currentReadingText = clickedId;
+        chats[promptIndex].messages.firstWhere((element) => element.id == clickedId).isPlaying = true;
+        _speechIdToReadQueue.add(chats[promptIndex].messages.firstWhere((element) => element.id == clickedId).id??"");
+        startSpeakingFirstMessageInQueue();
+      } else if (currentReadingText == clickedId) {
+        //current = null
+        textToSpeech.stop();
+        chats[promptIndex].messages.firstWhere((element) => element.id == currentReadingText).isPlaying = false;
+        currentReadingText = null;
+      }
+      //Not speaking
+    } else {
+        currentReadingText = clickedId;
+        chats[promptIndex].messages.firstWhere((element) => element.id == clickedId).isPlaying = true;
+        _speechIdToReadQueue.add(chats[promptIndex].messages.firstWhere((element) => element.id == clickedId).id??"");
+        startSpeakingFirstMessageInQueue();
+    }
+    update();
+  }
 
   void setLoading(bool value) {
     _isLoading = value;
@@ -37,6 +89,19 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
     _chats.add(_conversation);
+    //On finish read one-line
+    textToSpeech.setCompletionHandler((){
+      chats[promptIndex].messages.firstWhere((element) => element.id == currentReadingText).isPlaying = false;
+      currentReadingText = null;
+
+      if (isAutoSpeaking) {
+        if (_speechIdToReadQueue.isNotEmpty) {
+          chats[promptIndex].messages.firstWhere((element) => element.id == _speechIdToReadQueue.first).isPlaying = true;
+          startSpeakingFirstMessageInQueue();
+        }
+      }
+    });
+
   }
 
   Future postRequestToChatGPT() async {
@@ -109,6 +174,26 @@ class ChatController extends GetxController {
       summarizeThePrompt();
       chats[promptIndex].isSummarized = true;
     }
+
+    //Che do tu doc
+    if (isAutoSpeaking) {
+      _speechIdToReadQueue.add(textMessage.id!);
+      if (currentReadingText == null) {
+        chats[promptIndex].messages.firstWhere((element) => element.id == _speechIdToReadQueue.first).isPlaying = true;
+        startSpeakingFirstMessageInQueue();
+      }
+    }
+    update();
+  }
+
+  Future<void> startSpeakingFirstMessageInQueue() async {
+      currentReadingText = _speechIdToReadQueue.first;
+      await textToSpeech.setSpeechRate(0.5); //speed of speech
+      await textToSpeech.setVolume(1.0); //volume of speech
+      await textToSpeech.setPitch(1); //pitc of sound
+      await textToSpeech.speak(chats[promptIndex].messages.firstWhere((element) => element.id == _speechIdToReadQueue.first).message??"");
+      _speechIdToReadQueue.removeFirst();
+      update();
   }
 
   void addToPrompt(String message) {

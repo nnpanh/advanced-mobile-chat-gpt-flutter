@@ -30,18 +30,5 @@ AppBar appBar() {
     ),
     centerTitle: true,
     titleSpacing: 0,
-    actions: [
-      GestureDetector(
-        onTap: () {
-          chatController.addChat();
-        },
-        child: const Icon(
-          Icons.add,
-          size: 25,
-          color: Colors.white,
-        ),
-      ),
-      const SizedBox(width: 16),
-    ],
   );
 }

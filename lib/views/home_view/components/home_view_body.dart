@@ -1,4 +1,7 @@
+import 'dart:collection';
+
 import 'package:flutgpt/controller/chat_controller.dart';
+import 'package:flutgpt/controller/speaker_controller.dart';
 import 'package:flutgpt/views/home_view/components/chat_card.dart';
 import 'package:flutgpt/views/home_view/components/empty_state.dart';
 import 'package:flutter/material.dart';
@@ -17,26 +20,39 @@ class HomeViewBody extends StatefulWidget {
 
 class _HomeViewBodyState extends State<HomeViewBody> {
   ChatController chatController = Get.put(ChatController());
+  SpeakerController speakerController = Get.put(SpeakerController());
   TextEditingController inputController = TextEditingController();
   final ScrollController _controller = ScrollController(keepScrollOffset: true);
 
   //Speech to text
-  final SpeechToText _speechToText = SpeechToText();
+  SpeechToText _speechToText = SpeechToText();
+  bool _speechEnabled = false;
   String _lastWords = '';
+
+  // //Text to speech
+  // FlutterTts textToSpeech = FlutterTts();
+  // final Queue<String> _speechToReadQueue = Queue();
+
 
   @override
   void initState() {
     super.initState();
     _initSpeech();
+    chatController.changeAutoSpeakingMode(speakerController.autoRead.value);
   }
 
   /// This has to happen only once per app
   void _initSpeech() async {
-    setState(() {});
+    _speechEnabled = await _speechToText.initialize();
+    setState(() {
+    });
   }
 
   /// Each time to start a speech recognition session
   void _startListening() async {
+    if (!_speechEnabled) {
+       _initSpeech();
+    }
     await _speechToText.listen(onResult: _onSpeechResult);
     setState(() {});
   }
@@ -100,37 +116,16 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                   .toList();
 
                               // To scroll down to the bottom of the list after the list is built
-                              WidgetsBinding.instance
-                                  .addPostFrameCallback((_) => scrollDown());
+                              // WidgetsBinding.instance
+                              //     .addPostFrameCallback((_) => scrollDown());
 
                               return ChatCard(
                                 messageBlock: message[index],
                                 isPlaying: message[index].isPlaying,
-                                onClickPlay: () async {
-                                  message[index].isPlaying = !message[index].isPlaying;
-                                  chatController.update();
-                                  FlutterTts textToSpeech = FlutterTts();
-
-                                  textToSpeech.setCompletionHandler((){
-                                    message[index].isPlaying = false;
-                                    chatController.update();
-                                  });
-
-                                  if (message[index].isPlaying){
-                                    await textToSpeech.setSpeechRate(0.5); //speed of speech
-                                    await textToSpeech.setVolume(1.0); //volume of speech
-                                    await textToSpeech.setPitch(1); //pitc of sound
-
-                                    if (message[index].message!=null) {
-                                      await textToSpeech.stop();
-                                      await textToSpeech.speak(message[index].message!);
-                                    }
-                                  }
-                                  //If it's not playing
-                                  else {
-                                    await textToSpeech.stop();
-                                  }
-                                }
+                                onClickPlay: () {
+                                  chatController.onClickSpeakerIcon(message[index].id);
+                                },
+                                isAutoPlay: speakerController.autoRead.value
                               );
                             }),
                         Visibility(

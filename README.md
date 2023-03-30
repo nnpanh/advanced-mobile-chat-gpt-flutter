@@ -23,6 +23,9 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
+  <li>
+      <a href="#demo">Demo</a>
+    </li>
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
@@ -44,6 +47,14 @@
 
 
 <!-- ABOUT THE PROJECT -->
+## Demo
+
+Link video demo on Youtube: [https://www.youtube.com/watch?v=bIsi4-qRuks](https://www.youtube.com/watch?v=bIsi4-qRuks)
+
+Link video back-up on Drive: [https://drive.google.com/file/d/1s3sU1kfk3g-0BW_fIe53d2PmFKVqua5L/view?usp=sharing](https://drive.google.com/file/d/1s3sU1kfk3g-0BW_fIe53d2PmFKVqua5L/view?usp=sharing)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## About The Project
 
 This application is implemented following the requirements from HCMUS - Advanced Mobile Development class in 2023, Assignment 2 (25/03/2023 - 10/04/2023)

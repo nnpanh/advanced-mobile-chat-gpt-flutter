@@ -114,9 +114,7 @@ Drawer appDrawer(BuildContext context) {
                 ListTile(
                   onTap: () {
                     cleanDatabase();
-                    for (var elements in chatController.chats) {
-                      chatController.clearConversation();
-                    }
+                    chatController.clearConversation();
                     } ,
                   leading: const Icon(
                     Icons.delete_outline,
